@@ -610,6 +610,7 @@ function touchMoveListener(e) {
     window.requestAnimationFrame(() => {
       // offset the scrolling by the difference
       const diff = [currMidpoint[0] - startMidpoint[0], currMidpoint[1] - startMidpoint[1]];
+      dragDistance += getDist(diff);
       // calculate the mouse position after zooming
       const oldPos = [currMidpoint[0]/zoom + leftScroll(), currMidpoint[1]/zoom + topScroll()];
       modZoom(currDist/startDist - lastDist/startDist);
