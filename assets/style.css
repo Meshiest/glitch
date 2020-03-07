@@ -191,12 +191,8 @@ body {
   border-color: #fff;
 }
 
-.marker.ring.filtered::after {
-  height: 4.1rem;
-}
-
 .marker.ring.filtered::before {
-  transform: scale(2) translate(-25%, calc(-50% - 2.4rem));
+  transform: scale(2) translate(-25%, -25%);
 }
 
 .marker.ring.new::before {
