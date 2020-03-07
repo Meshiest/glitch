@@ -152,7 +152,7 @@ function modZoom(d) {
   if (isFirefox)
     return;
   zoom += d;
-  zoom = Math.min(Math.max(zoom, 0.3), 5);
+  zoom = Math.min(Math.max(zoom, 0.3), 8);
   $('.map-child').style.zoom = (zoom * 100) + '%';
   $$('.menu').forEach(m => m.style.zoom = ((1 / zoom) * 100) + '%');
   setMarkerPos($('.preview-menu'), true);
