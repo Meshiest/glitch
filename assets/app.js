@@ -458,8 +458,8 @@ const itemInit = el => {
       const menu = $(`.item.filtered`);
       const isFiltered = menu && menu.getAttribute('data-short') === short;
       // remove focus on other kinds of markers
-      //$$(`.filtered:not([data-short="${short}"])`)
-      //  .forEach(el => el.classList.remove('filtered'));
+      $$(`.filtered:not([data-short="${short}"])`)
+        .forEach(el => el.classList.remove('filtered'));
 
       // toggle focus on this kind of marker based on the menu focus
       // (adding new items prevents us from using .toggle)
