@@ -17,6 +17,27 @@ body {
   background-color: black;
 }
 
+.map-parent[data-map="kc"] .we {display: none;}
+.map-parent[data-map="we"] .we {display: block;}
+.map-parent[data-map="kc"] .kc {display: block;}
+.map-parent[data-map="we"] .kc {display: none;}
+
+.map-parent[data-map="kc"] .marker.ring[data-round="1"] {--size: 1187.84px;}
+.map-parent[data-map="kc"] .marker.ring[data-round="2"] {--size: 795.79px;}
+.map-parent[data-map="kc"] .marker.ring[data-round="3"] {--size: 479.82px;}
+.map-parent[data-map="kc"] .marker.ring[data-round="4"] {--size: 122.88px;}
+.map-parent[data-map="kc"] .marker.ring[data-round="5"] {--size: 93.62px;}
+.map-parent[data-map="kc"] .marker.ring[data-round="6"] {--size: 46.81px;}
+.map-parent[data-map="kc"] .marker.ring[data-round="7"] {--size: 4.68px;}
+
+.map-parent[data-map="we"] .marker.ring[data-round="1"] {--size: 1089.04px;}
+.map-parent[data-map="we"] .marker.ring[data-round="2"] {--size: 589.46px;}
+.map-parent[data-map="we"] .marker.ring[data-round="3"] {--size: 362.75px;}
+.map-parent[data-map="we"] .marker.ring[data-round="4"] {--size: 184.26px;}
+.map-parent[data-map="we"] .marker.ring[data-round="5"] {--size: 63.43px;}
+.map-parent[data-map="we"] .marker.ring[data-round="6"] {--size: 30.21px;}
+.map-parent[data-map="we"] .marker.ring[data-round="7"] {--size: 5px;}
+
 .map-child {
   position: absolute;
   top: 50%;
@@ -72,13 +93,16 @@ body {
 }
 
 .marker {
+  font-family: monospace;
   position: absolute;
+}
+
+.marker.normal {
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
-  font-family: monospace;
   color: black;
   font-weight: bold;
   justify-content: center;
@@ -86,18 +110,108 @@ body {
   transform: scale(1) translate(-50%, calc(-100% - 0.25rem));
 }
 
-@media screen and (min-width: 1200px) {
-  .marker {
-    box-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.5);
-  }
+.marker.care {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: flex;
+  align-items: center;
+  font-family: monospace;
+  color: black;
+  font-weight: bold;
+  justify-content: center;
+  font-size: .7rem;
+  transform: scale(1) rotate(45deg);
 }
 
-.marker:hover, .marker.filtered {
+.marker.care::after {
+  pointer-events: auto;
+  content: attr(data-round);
+  position: absolute;
+  cursor: pointer;
+  display: flex;
+  transform: rotate(-45deg);
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.marker.care:hover, .marker.care.filtered {
+  transform: scale(2) rotate(45deg);
+  cursor: pointer;
+  z-index: 20000;
+}
+
+.marker.ring {
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  border: .15rem solid rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.marker.ring.filtered {
+  border-width: .3rem;
+}
+
+.marker.ring::after {
+  pointer-events: auto;
+  content: attr(data-round);
+  position: absolute;
+  cursor: pointer;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  background-color: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, calc(-100% - 1.2rem));
+  opacity: 0.5;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+}
+.marker.ring::before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -100%);
+  height: 1.2rem;
+  width: 50%;
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.marker.ring:hover::after {
+  opacity: 1;
+}
+.marker.ring:hover, .marker.ring:hover::before {
+  border-color: #fff;
+}
+
+.marker.ring.filtered::before {
+  height: 4.1rem;
+}
+
+.marker.ring.filtered::after {
+  transform: scale(2) translate(-25%, calc(-50% - 2.4rem));
+}
+
+.marker.ring.new::after {
+  pointer-events: none;
+  content: '';
+  background-color: #0f0;
+}
+
+.marker.normal:hover, .marker.normal.filtered {
   transform: scale(2) translate(-25%, calc(-74% - 0.25rem));
   cursor: pointer;
   z-index: 20000;
 }
-.marker::after {
+.marker.normal::after {
   background-color: inherit;
   position: absolute;
   left: .25rem;
@@ -109,9 +223,20 @@ body {
   content: '';
 }
 
+.marker.care {
+  background-color: #ccf;
+}
+
 .marker.new {
   background-color: #0f0;
 }
+
+.marker.ring.new {
+  border-color: #0f0;
+  z-index: 10000;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 
 .items-hud {
   position: absolute;
@@ -120,6 +245,7 @@ body {
   bottom: 0;
   width: auto;
   z-index: 50000;
+  display: flex;
   overflow: visible;
   font-family: monospace;
   display: inline-flex;
@@ -136,7 +262,7 @@ body {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-.items-category:hover {
+.items-category:not(.closed):hover, .items-category.open {
   height: 330px;
   transform: translateY(calc(30px - 100%));
 }
@@ -163,7 +289,7 @@ body {
 }
 
 .items-list .item::before {
-  font-size: 12px;
+  font-size: 10px;
   position: absolute;
   left: 4px;
   top: 4px;
@@ -183,9 +309,9 @@ body {
 .items-list .item.smg::before{content: 'SMG';}
 .items-list .item.ar::before{content: 'AR';}
 .items-list .item.lmg::before{content: 'LMG';}
-.items-list .item.sr::before{content: 'Sniper';}
-.items-list .item.sg::before{content: 'Shotgun';}
-.items-list .item.handgun::before{content: 'Pistol';}
+.items-list .item.sr::before{content: 'sniper';}
+.items-list .item.sg::before{content: 'shotgun';}
+.items-list .item.handgun::before{content: 'pistol';}
 .item.ammo-light, .menu .ammo-light{color: #f2cb88;}
 .item.ammo-heavy, .menu .ammo-heavy{color: #0a8f5a;}
 .item.ammo-shotgun, .menu .ammo-shotgun{color: #d93e0f;}
@@ -201,14 +327,12 @@ body {
 .item.ammo-carepackage, .item.gold, .menu .gold,
 .item[data-short="1x"], .selected-item[data-short="1x"] span,
 .item[data-short="10x"], .selected-item[data-short="10x"] span,
-.item[data-short="anv"], .selected-item[data-short="anv"] span,
-.item[data-short="stab"], .selected-item[data-short="stab"] span
+.item[data-short="anv"], .selected-item[data-short="anv"] span
 {color: #f2bd0c;text-shadow: 0 0 3px #f2bd0c;}
 .marker.ammo-carepackage, .marker.gold,
 .marker[data-short="1x"],
 .marker[data-short="10x"],
-.marker[data-short="anv"],
-.marker[data-short="stab"]
+.marker[data-short="anv"]
 {background: #f2bd0c;text-shadow: 0 0 3px #f2bd0c;}
 
 .item[data-short="evo"], .selected-item[data-short="evo"] span
@@ -319,4 +443,43 @@ a.disabled {
   font-size: 16px;
   text-align: center;
   text-shadow: 0 0 2px #ccf;
+}
+
+.rounds {
+  text-align: center;
+  margin: 8px 0;
+}
+
+.rounds a {
+  margin: 0 4px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.rounds a.unselected {
+  font-size: 12px;
+  text-decoration: none;
+}
+
+@media screen and (min-width: 1200px) {
+  .marker.normal, .marker.care {
+    box-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .items-title {
+    font-size: 16px;
+    height: 30px;
+    padding: 0 8px;
+  }
+
+  .items-category {
+    min-width: 100px;
+    flex: 1;
+    height: 30px;
+    transform: translateY(0);
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
 }

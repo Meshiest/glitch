@@ -40,13 +40,13 @@ const END_DATE = new Date('3/17/2020 12:00 CST').getTime();
 
 // things that can be indexed
 const THINGS = 'r99 alt prow r301 g7 flat hem hav spit star '+
-  'devo long trip krab char sent pk eva moz mast re45 ' +
+  'long trip char sent pk eva moz mast re45 ' +
   '2020 wing evo helm body knok pack '+
-  'med phx batt ult stab 1x 10x 8x anv '+
-  'hmag lmag emag smag ' +
+  'stab bolt 1x 8x anv '+
+  'hmag lmag smag ' +
   '2tap fire chok hamm ring care'.split(' ');
 
-const ARMOR = 'helm body knok pack'.split(' ');
+const ARMOR = 'stab bolt helm body knok pack'.split(' ');
 
 // determine if we want to authenticate input users
 if (config['use-auth']) {
@@ -148,7 +148,7 @@ function validateLoot(data) {
     if (typeof data.round !== 'number')
       return false;
 
-    if (data.round < 1 || data.round > 8)
+    if (data.round < 1 || data.round > 7)
       return false;
   }
 
@@ -297,13 +297,27 @@ app.get('/api/data', (req, res) => {
 
   const kc = !!req.query.kc;
 
+  // determine which event day we're on
+  // so we can accurately determine whether or not to display the newest ring
   const now = Date.now();
   const day = 24*60*60*1000
-  const curr_day = Math.floor((now - START_DAY)/day);
+  const currDay = Math.floor((now - START_DAY)/day);
+  const dayStart = START_DAY + currDay * day;
 
   table.things.aggregate([
     // select values before or after start of kings canyon week
-    {$match: {created: {[kc ? '$gt' : '$lt']: SECOND_WEEK}}},
+    {$match: {
+      created: {
+        [kc ? '$gt' : '$lt']: SECOND_WEEK,
+      },
+    }},
+    // only show carepackages and rings from the current day
+    {$match: {
+      $or: [
+        {thing: {$nin: ['ring', 'care']}},
+        {created: {$gt: dayStart}},
+      ],
+    }},
 
     // join on votes
     {$lookup: {from: 'votes', localField: 'uuid', foreignField: 'uuid', as: 'votes'}},

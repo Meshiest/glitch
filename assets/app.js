@@ -9,13 +9,17 @@ let launchTime = Date.now();
 let currMap;
 const things = {};
 
+// to be implemented - better filtering,
+// although it could also be done via CSS properties
+// and parent classes
+const filters = {
+  negative: true,
+};
+
 let countdownTimeout, mapTimeout;
 
 const margin = 50;
-const ringsKC = [
-  .58,
-  .35,
-];
+
 
 // event times
 const START_DAY = new Date('3/3/2020 12:00 CST').getTime();
@@ -37,8 +41,7 @@ const dataCache = [[], []];
 // change the display map, then fetch data
 function setMap(isWorldsEdge) {
   currMap = isWorldsEdge;
-  $$('.kc').forEach(el => el.style.display = isWorldsEdge ? 'none' : 'block');
-  $$('.we').forEach(el => el.style.display = isWorldsEdge ? 'block' : 'none');
+  $('.map-parent').setAttribute('data-map', isWorldsEdge ? 'we' : 'kc');
   cancelAdd();
   getData(isWorldsEdge);
 
@@ -78,6 +81,23 @@ function countdown() {
 
   $('.countdown-clock').innerText = text;
   countdownTimeout = setTimeout(countdown, 1000);
+}
+
+// get an age string from integer seconds
+function calcAge(ago) {
+  let agoText;
+  const delta = Date.now() - launchTime + ago;
+  if (delta < 5000)
+    agoText = 'moments';
+  else if (delta < MIN)
+    agoText = Math.round(delta/1000) + ' seconds';
+  else if (delta < HOUR)
+    agoText = Math.round(delta/MIN) + ' minutes';
+  else if (delta < DAY)
+    agoText = Math.round(delta/HOUR) + ' hours';
+  else
+    agoText = Math.floor(delta/DAY) + ' days';
+  return agoText;
 }
 
 // check semi frequently for new map
@@ -135,7 +155,7 @@ function modZoom(d) {
   zoom = Math.min(Math.max(zoom, 0.3), 5);
   $('.map-child').style.zoom = (zoom * 100) + '%';
   $$('.menu').forEach(m => m.style.zoom = ((1 / zoom) * 100) + '%');
-  setMarkerPos($('.preview-menu'), true)
+  setMarkerPos($('.preview-menu'), true);
   $$('.marker').forEach(m => setMarkerPos(m));
   $('#zoomValue').innerText = Math.round(zoom * 100) + '%';
 }
@@ -144,23 +164,38 @@ function modZoom(d) {
 function setMarkerPos(el, isPreview=false) {
   const x = parseFloat(el.getAttribute('x'));
   const y = parseFloat(el.getAttribute('y'));
-  el.style.left = x * zoom * 2048 + 'px';
-  el.style.top = y * zoom * 2048 + 'px';
-  el.style.zoom = ((1 / zoom) * 100) + '%'
+  if (!el.classList.contains('ring')) {
+    el.style.left = x * zoom * 2048 + 'px';
+    el.style.top = y * zoom * 2048 + 'px';
+    el.style.zoom = ((1 / zoom) * 100) + '%';
+  } else {
+    el.style.left = x * 2048 + 'px';
+    el.style.top = y * 2048 + 'px';
+  }
 }
 
 // create a marker on the map
 function addMarker(data) {
+  if (data.thing === 'stab' && !data.color)
+    data.color = 'gold';
+
+  // if there's enough downvotes (20) and the ratio is bad enough, hide this thing
+  if (data.bad > 10 && data.good/data.bad < 0.3 && filters.negative)
+    return;
+
   const meta = things[data.thing];
   const el = document.createElement('div');
-  el.className = `marker ${meta && meta.ammo || ''} ${data.color || ''}`;
+  el.className = `marker ${meta && meta.game ? data.thing : 'normal'} ${meta && meta.ammo || ''} ${data.color || ''}`;
   el.setAttribute('x', data.x);
   el.setAttribute('y', data.y);
+  if (meta && meta.game)
+    el.setAttribute('data-round', data.round);
+  else
+    el.innerText = data.thing;
   el.title = meta && meta.long;
   el.setAttribute('data-short', data.thing);
   el.setAttribute('data', JSON.stringify(data));
   setMarkerPos(el);
-  el.innerText = data.thing;
   $('.overlay').appendChild(el);
   return el;
 }
@@ -175,28 +210,25 @@ function clickMarker(el) {
   preview.setAttribute('x', el.getAttribute('x'));
   preview.setAttribute('y', el.getAttribute('y'));
 
-  $('#previewLong').innerText = meta.long;
-  $('#previewShort').innerText = data.thing;
   $('#goodPoints').innerText = '+' + data.good;
   $('#badPoints').innerText = '-' + data.bad;
   $('#percent').innerText = (data.good + data.bad === 0 ? '?%' : Math.round(data.good/(data.good+data.bad)*100) + '%');
   $('#redditUser').innerText = data.user;
   $('#redditUser').href = 'https://reddit.com/u/' + data.user;
 
-  let agoText;
-  const ago = Date.now() - launchTime + data.ago;
-  if (ago < 5000)
-    agoText = 'moments';
-  else if (ago < MIN)
-    agoText = Math.round(ago/1000) + ' seconds';
-  else if (ago < HOUR)
-    agoText = Math.round(ago/MIN) + ' minutes';
-  else if (ago < DAY)
-    agoText = Math.round(ago/HOUR) + ' hours';
-  else
-    agoText = Math.floor(ago/DAY) + ' days';
+  $('#age').innerText = calcAge(data.ago);
 
-  $('#age').innerText = agoText;
+  const className = `${meta.ammo || ''} ${data.color || ''}`.trim();
+  $$('.selected-item').forEach(e => e.setAttribute('data-short', className ? '' : data.thing));
+
+  $$('.item-short').forEach(el => {
+    el.innerText = data.thing;
+    el.className = 'item-short ' + className;
+  });
+  $$('.item-long').forEach(el => {
+    el.innerText = meta.long;
+    el.className = 'item-long ' + className;
+  });
 
   const vote = (uuid, vote) => e => {
     if (vote === data.vote) {
@@ -245,11 +277,6 @@ function clickMarker(el) {
   $('#deleteButton').style.display = data.user === authUser || admin ? 'inline' : 'none';
   $('#deleteButton').onclick = remove;
   $('.preview-menu .action-items').style.display = authUser ? 'inline' : 'none';
-
-  const className = `${meta.ammo || ''} ${data.color || ''}`.trim();
-  $$('.selected-item').forEach(e => e.setAttribute('data-short', className ? '' : data.thing));
-  $('#previewShort').className =
-  $('#previewLong').className = className;
 
   preview.style.display = 'block';
   setMarkerPos(preview, true);
@@ -329,6 +356,7 @@ function getData(isWorldsEdge) {
     })
 }
 
+// check if we need to sign in to add stuff to the map
 function authCheck() {
   fetch('/auth/check')
     .then(r => r.json())
@@ -362,35 +390,68 @@ function authCheck() {
 const itemInit = el => {
   const className = el.className;
   const short = el.getAttribute('data-short');
+  const isGame = el.getAttribute('data-game') === 'true';
   const long = el.getAttribute('data-name');
+  let chosenRound;
 
   // add the entry to our list
   things[short] = {
     long,
     ammo: el.classList.length === 3 ? el.classList[2] : undefined,
+    game: isGame,
   };
 
   return e => {
     e.preventDefault();
+    // if we're on the wrong map (second week and worlds edge or first week and kings canyon)
+    // prevent users from adding to the map (entries are time based, not map indexed)
+
     if (authed && focused && !isMapReadOnly()) {
       $('.state-0').style.display = 'none';
-      $('.state-1').style.display = 'block';
+      $('.state-1').style.display = isGame ? 'none' : 'block';
+      $('.state-2').style.display = isGame ? 'block' : 'none';
 
-      // if we're on the wrong map (second week and worlds edge or first week and kings canyon)
-      // prevent users from adding to the map (entries are time based, not map indexed)
+      $$('.cursor .marker').forEach(e => e.style.display = 'none');
 
-      $('#addButton').style.display = 'inline';
+      if (isGame) {
+        $(`.cursor .marker.${short}`).style.display = 'block';
+        $(`.care-note`).style.display = short === 'care' ? 'block' : 'none';
+
+        $$('.rounds a').forEach(el => {
+          el.classList.remove('unselected');
+          el.onclick = () => {
+            $('#addButton').style.display = 'inline';
+            chosenRound = Number(el.getAttribute('data-round'));
+            if (short === 'ring')
+              $('.cursor .marker.ring').setAttribute('data-round', chosenRound);
+            // set ring display size
+            $$('.rounds a').forEach(b => {
+                b.classList[el === b ? 'remove' : 'add']('unselected');
+            });
+          };
+        });
+      } else {
+        $('.cursor .marker.normal').style.display = 'block';
+        $('#addButton').style.display = 'inline';
+      }
+
       $('#addButton').onclick = e => {
         console.log('adding', short, 'at', ...cursorPos);
         postData(short, cursorPos, {
           color: el.classList.length === 2 ? el.classList[1] : undefined,
+          round: chosenRound,
         });
       };
 
-      $('#itemShort').innerText = short;
-      $('#itemLong').innerText = long;
       $$('.selected-item').forEach(e => e.setAttribute('data-short', className.replace('item', '') ? '' : short));
-      $('#itemShort').className = $('#itemLong').className = className;
+      $$('.item-short').forEach(e => {
+        e.innerText = short;
+        e.className = 'item-short ' + className;
+      });
+      $$('.item-long').forEach(e => {
+        e.innerText = long;
+        e.className = 'item-long ' + className;
+      });
     } else {
       const menu = $(`.item.filtered`);
       const isFiltered = menu && menu.getAttribute('data-short') === short;
@@ -468,8 +529,9 @@ function clickView(target, x, y) {
 
   if (!target || target.className !== 'overlay') {
     start = cursor = null;
-    if (isMobile)
+    if (isMobile) {
       target.click();
+    }
     return;
   }
 
@@ -522,11 +584,15 @@ function clickUpView(x, y, noshift=false) {
     const dataPos = [renderPos[0]/(2048), renderPos[1]/(2048)];
 
     const readOnly = isMapReadOnly();
-    $('.state-0').style.display = readOnly ? 'none' : 'block';
-    $('.state-2').style.display = readOnly ? 'block' : 'none';
-    $('.state-1').style.display = 'none';
-    $('#addButton').style.display = 'none';
-    focused = true;
+    if (!focused) {
+      $$('.cursor .marker').forEach(e => e.style.display = 'none');
+      $('.state-0').style.display = readOnly ? 'none' : 'block';
+      $('.state-1').style.display = 'none';
+      $('.state-2').style.display = 'none';
+      $('.state-3').style.display = readOnly ? 'block' : 'none';
+      $('#addButton').style.display = 'none';
+      focused = true;
+    }
     setCursor(...dataPos);
   }
 
@@ -646,6 +712,22 @@ document.addEventListener('DOMContentLoaded', e => {
 
   $$('.items-list .item').forEach(i =>
     i.addEventListener('click', itemInit(i)));
+
+  // handle awkward bottom menu issues on mobile
+  if (isMobile)
+    $$('.items-title').forEach(i => {
+      i.parentNode.classList.add('closed');
+      i.onclick = () => {
+        const isOpen = i.parentNode.classList.contains('open');
+        $$('.items-category').forEach(j => j.classList.add('closed'));
+        if (!isOpen) {
+          i.parentNode.classList.remove('closed');
+          i.parentNode.classList.add('open');
+        } else {
+          i.parentNode.classList.remove('open');
+        }
+      };
+    });
 
   setCursor(-1, -1);
   $('.map-child').scrollLeft = 1024 - $('.map-child').clientWidth / 2;
