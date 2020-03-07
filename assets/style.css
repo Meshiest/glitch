@@ -156,6 +156,7 @@ body {
 }
 
 .marker.ring.filtered {
+  z-index: 20000;
   border-width: .3rem;
 }
 
@@ -193,6 +194,7 @@ body {
 
 .marker.ring.filtered::before {
   transform: scale(2) translate(-25%, -25%);
+  z-index: 20000;
 }
 
 .marker.ring.new::before {
