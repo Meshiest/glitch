@@ -120,7 +120,7 @@ body {
   font-weight: bold;
   justify-content: center;
   font-size: .7rem;
-  transform: scale(1) rotate(45deg);
+  transform: scale(1) translate(-50%, -50%) rotate(45deg);
 }
 
 .marker.care::after {
@@ -136,8 +136,12 @@ body {
   height: 1.2rem;
 }
 
+.marker.care.new, .marker.care.new::after {
+  pointer-events: none;
+}
+
 .marker.care:hover, .marker.care.filtered {
-  transform: scale(2) rotate(45deg);
+  transform: scale(2) translate(-25%, -25%) rotate(45deg);
   cursor: pointer;
   z-index: 20000;
 }
