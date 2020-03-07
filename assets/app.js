@@ -169,6 +169,7 @@ function setMarkerPos(el, isPreview=false) {
     el.style.top = y * zoom * 2048 + 'px';
     el.style.zoom = ((1 / zoom) * 100) + '%';
   } else {
+    el.style.setProperty('--child-zoom', ((1 / zoom) * 100) + '%');
     el.style.left = x * 2048 + 'px';
     el.style.top = y * 2048 + 'px';
   }
