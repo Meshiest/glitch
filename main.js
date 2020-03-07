@@ -35,6 +35,7 @@ app.use(session({
 const isAdmin = name => config.administrators.includes((name || '').toLowerCase());
 
 const START_DAY = new Date('3/3/2020 12:00 CST').getTime();
+const RESET_DAY = new Date('3/3/2020 4:00 CST').getTime();
 const SECOND_WEEK = new Date('3/10/2020 12:00 CST').getTime();
 const END_DATE = new Date('3/17/2020 12:00 CST').getTime();
 
@@ -301,8 +302,8 @@ app.get('/api/data', (req, res) => {
   // so we can accurately determine whether or not to display the newest ring
   const now = Date.now();
   const day = 24*60*60*1000
-  const currDay = Math.floor((now - START_DAY)/day);
-  const dayStart = START_DAY + currDay * day;
+  const currDay = Math.floor((now - RESET_DAY)/day);
+  const dayStart = RESET_DAY + currDay * day;
 
   table.things.aggregate([
     // select values before or after start of kings canyon week
