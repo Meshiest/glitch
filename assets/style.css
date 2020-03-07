@@ -234,6 +234,44 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.settings-hud {
+  position: absolute;
+  right: 0%;
+  transform: translateX(-5%);
+  top: 0;
+  width: auto;
+  z-index: 50000;
+  display: flex;
+  overflow: visible;
+  font-family: monospace;
+  display: inline-flex;
+  height: 30px;
+}
+
+.settings-category {
+  user-select: none;
+  min-width: 120px;
+  color: white;
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.settings-title {
+  display: flex;
+  font-size: 20px;
+  align-items: center;
+  justify-content: right;
+  height: 30px;
+  padding: 0 8px;
+}
+
+.settings-widget {
+  font-size: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
 
 .items-hud {
   position: absolute;
@@ -263,6 +301,7 @@ body {
   height: 330px;
   transform: translateY(calc(30px - 100%));
 }
+
 
 .items-title {
   display: flex;
@@ -466,6 +505,12 @@ a.disabled {
 
 @media screen and (max-width: 1200px) {
   .items-title {
+    font-size: 16px;
+    height: 30px;
+    padding: 0 8px;
+  }
+
+  .settings-title {
     font-size: 16px;
     height: 30px;
     padding: 0 8px;

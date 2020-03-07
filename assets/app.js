@@ -7,6 +7,7 @@ let focused = false;
 let authed = false, authUser, admin;
 let launchTime = Date.now();
 let currMap;
+let unfilteredOpacity = 1.0;
 const things = {};
 
 // to be implemented - better filtering,
@@ -457,15 +458,24 @@ const itemInit = el => {
       const menu = $(`.item.filtered`);
       const isFiltered = menu && menu.getAttribute('data-short') === short;
       // remove focus on other kinds of markers
-      $$(`.filtered:not([data-short="${short}"])`)
-        .forEach(el => el.classList.remove('filtered'));
+      //$$(`.filtered:not([data-short="${short}"])`)
+      //  .forEach(el => el.classList.remove('filtered'));
 
       // toggle focus on this kind of marker based on the menu focus
       // (adding new items prevents us from using .toggle)
       $$(`[data-short="${short}"]`)
         .forEach(el => el.classList[isFiltered ? 'remove' : 'add']('filtered'));
+      $$(`[data-short="${short}"]`)
+        .forEach(el => el.style.opacity = isFiltered ? unfilteredOpacity : 1);
     }
   }
+}
+
+function updateUnfilteredOpacity(value){
+  unfilteredOpacity = value/100;
+  $$('.marker.normal:not(.filtered)').forEach(el =>
+    el.style.opacity = unfilteredOpacity
+  );
 }
 
 function cancelAdd(e) {
