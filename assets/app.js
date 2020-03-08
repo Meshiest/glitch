@@ -459,18 +459,18 @@ const itemInit = el => {
       const isFiltered = menu && menu.getAttribute('data-short') === short;
       // remove focus on other kinds of markers
       $$(`.filtered:not([data-short="${short}"])`)
-        .forEach(el => {
-          el.classList.remove('filtered');
-          el.style.opacity = unfilteredOpacity;
-        });
+        .forEach(el => el.classList.remove('filtered'));
+      // reset opacity for all markers
+      $$(`.marker`)
+        .forEach(el => el.style.opacity = unfilteredOpacity);
 
       // toggle focus on this kind of marker based on the menu focus
       // (adding new items prevents us from using .toggle)
       $$(`[data-short="${short}"]`)
-        .forEach(el => {
-          el.classList[isFiltered ? 'remove' : 'add']('filtered');
-          el.style.opacity = isFiltered ? unfilteredOpacity : 1;
-        });        
+        .forEach(el => el.classList[isFiltered ? 'remove' : 'add']('filtered'));        
+      // update opacity for this kind of marker
+      $$(`.marker[data-short="${short}"]`)
+        .forEach(el => el.style.opacity = isFiltered ? unfilteredOpacity : 1);
     }
   }
 }
