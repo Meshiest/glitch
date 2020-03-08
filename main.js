@@ -35,9 +35,9 @@ app.use(session({
 const isAdmin = name => config.administrators.includes((name || '').toLowerCase());
 
 const START_DAY = new Date('3/3/2020 12:00 CST').getTime();
-const RESET_DAY = new Date('3/3/2020 4:00 CST').getTime();
-const SECOND_WEEK = new Date('3/10/2020 12:00 CST').getTime();
-const END_DATE = new Date('3/17/2020 12:00 CST').getTime();
+const RESET_DAY = new Date('3/3/2020 4:00 CDT').getTime();
+const SECOND_WEEK = new Date('3/10/2020 12:00 CDT').getTime();
+const END_DATE = new Date('3/17/2020 12:00 CDT').getTime();
 
 // things that can be indexed
 const THINGS = 'r99 alt prow r301 g7 flat hem hav spit star '+

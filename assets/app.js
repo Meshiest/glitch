@@ -23,8 +23,8 @@ const margin = 50;
 
 // event times
 const START_DAY = new Date('3/3/2020 12:00 CST').getTime();
-const SECOND_WEEK = new Date('3/10/2020 12:00 CST').getTime();
-const END_DATE = new Date('3/17/2020 12:00 CST').getTime();
+const SECOND_WEEK = new Date('3/10/2020 12:00 CDT').getTime();
+const END_DATE = new Date('3/17/2020 12:00 CDT').getTime();
 
 const MIN = 60*1000;
 const HOUR = 60*MIN;
@@ -54,7 +54,7 @@ function setMap(isWorldsEdge) {
 // countdown clock for impatient users
 function countdown() {
   // ignore the clock if we're already in the second week
-  $('.countdown-clock').display = !isSecondWeek() ? 'block' : 'none';
+  $('.countdown-clock').style.display = !isSecondWeek() ? 'block' : 'none';
 
   // hide countdown on at end
   if (isSecondWeek()) {
