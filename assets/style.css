@@ -206,6 +206,7 @@ body {
 .marker.normal:hover, .marker.normal.filtered {
   transform: scale(2) translate(-25%, calc(-74% - 0.25rem));
   cursor: pointer;
+  opacity: 1 !important;
   z-index: 20000;
 }
 .marker.normal::after {

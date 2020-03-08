@@ -459,14 +459,18 @@ const itemInit = el => {
       const isFiltered = menu && menu.getAttribute('data-short') === short;
       // remove focus on other kinds of markers
       $$(`.filtered:not([data-short="${short}"])`)
-        .forEach(el => el.classList.remove('filtered'));
+        .forEach(el => {
+          el.classList.remove('filtered');
+          el.style.opacity = unfilteredOpacity;
+        });
 
       // toggle focus on this kind of marker based on the menu focus
       // (adding new items prevents us from using .toggle)
       $$(`[data-short="${short}"]`)
-        .forEach(el => el.classList[isFiltered ? 'remove' : 'add']('filtered'));
-      $$(`[data-short="${short}"]`)
-        .forEach(el => el.style.opacity = isFiltered ? unfilteredOpacity : 1);
+        .forEach(el => {
+          el.classList[isFiltered ? 'remove' : 'add']('filtered');
+          el.style.opacity = isFiltered ? unfilteredOpacity : 1;
+        });        
     }
   }
 }
