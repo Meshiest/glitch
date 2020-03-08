@@ -268,9 +268,11 @@ body {
 
 .settings-widget {
   font-size: 16px;
-  max-height: 300px;
-  overflow-y: auto;
   background-color: rgba(0, 0, 0, 0.7);
+}
+
+.settings-widget-slider {
+  width: 210px;
 }
 
 
@@ -515,6 +517,10 @@ a.disabled {
     font-size: 16px;
     height: 30px;
     padding: 0 8px;
+  }
+
+  .settings-widget-slider {
+    width: 170px;
   }
 
   .items-category {
