@@ -46,6 +46,9 @@ function setMap(isWorldsEdge) {
   cancelAdd();
   getData(isWorldsEdge);
 
+  // reset opacity slider
+  document.getElementById("settings-opacity-slider").value = 100;
+
   // trigger a countdown if it's the right week
   clearTimeout(countdownTimeout);
   if (!isSecondWeek() && !currMap)

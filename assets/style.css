@@ -271,7 +271,7 @@ body {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-.settings-widget-slider {
+#settings-opacity-slider {
   width: 210px;
 }
 
@@ -519,7 +519,7 @@ a.disabled {
     padding: 0 8px;
   }
 
-  .settings-widget-slider {
+  #settings-opacity-slider {
     width: 170px;
   }
 
