@@ -22,7 +22,9 @@ const loadFilter = (name, defaultValue) =>
 const filters = {
   filterNegative: loadFilter('filterNegative', true),
   filterPositive: loadFilter('filterPositive', false),
-  filterGuns: loadFilter('filterGuns', false),
+  filterGuns: loadFilter('filterGuns', true),
+  filterArmor: loadFilter('filterArmor', true),
+  filterEquip: loadFilter('filterEquip', true),
 };
 
 // setup options toggles
@@ -207,7 +209,7 @@ function setMarkerPos(el, isPreview=false) {
 }
 
 // create a marker on the map
-function addMarker(data) {
+function addMarker(data, nofilter) {
   if (data.thing === 'stab' && !data.color)
     data.color = 'gold';
 
@@ -215,14 +217,23 @@ function addMarker(data) {
   if (data.bad > 3 && data.good/data.bad < 0.3 && filters.filterNegative)
     return;
 
-  if ((data.good < 1 || data.bad !== 0 && data.good/data.bad < 0.5) && filters.filterPositive)
+  if ((data.good < 1 || data.bad !== 0 && data.good/data.bad < 0.5) && filters.filterPositive && !nofilter)
     return;
 
+  const attach = ['stab', '1x', '8x', 'hmag', 'lmag', 'smag', 'bolt', 'anv', '2tap', 'fire', 'chok', 'hamm'];
+
+  if (!filters.filterEquip && attach.includes(data.thing) && !nofilter)
+    return;
 
   const meta = things[data.thing];
 
-  if (meta && meta.ammo && filters.filterGuns)
+  if (meta && meta.ammo && !filters.filterGuns && !nofilter)
     return;
+
+  if (!filters.filterArmor && ['evo', 'body', 'helm', 'pack', 'knok'].includes(data.thing) && !nofilter) {
+    return;
+  }
+
 
   const el = document.createElement('div');
   el.className = `marker ${meta && meta.game ? data.thing : 'normal'} ${meta && meta.ammo || ''} ${data.color || ''}`;
@@ -359,7 +370,7 @@ function postData(short, pos, data) {
         return;
 
       r.ago = -launchTime;
-      clickMarker(addMarker(r));
+      clickMarker(addMarker(r, true));
     })
     .catch(console.error);
 }
@@ -374,7 +385,7 @@ function getData(isWorldsEdge, useCache=false) {
       overlay.removeChild(child);
       child = overlay.lastElementChild;
     }
-    r.forEach(addMarker);
+    r.forEach(el => addMarker(el));
   };
 
   // check if we fetched this data less than 10 seconds ago
@@ -771,6 +782,8 @@ document.addEventListener('DOMContentLoaded', e => {
   initToggle('settingsHideNegative', 'filterNegative', {getData: true});
   initToggle('settingsOnlyPositive', 'filterPositive', {getData: true});
   initToggle('settingsHideGuns', 'filterGuns', {getData: true});
+  initToggle('settingsHideEquip', 'filterEquip', {getData: true});
+  initToggle('settingsHideArmor', 'filterArmor', {getData: true});
 
   $$('.items-list .item').forEach(i =>
     i.addEventListener('click', itemInit(i)));
