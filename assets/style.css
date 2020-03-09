@@ -7,6 +7,7 @@ body, html {
 }
 
 body {
+  margin: 0;
   display: flex;
   height: 100vh;
 }
@@ -37,6 +38,9 @@ body {
 .map-parent[data-map="we"] .marker.ring[data-round="5"] {--size: 63.43px;}
 .map-parent[data-map="we"] .marker.ring[data-round="6"] {--size: 30.21px;}
 .map-parent[data-map="we"] .marker.ring[data-round="7"] {--size: 5px;}
+
+.map-child .marker.normal:not(.filtered) {}
+.map-child .marker.normal.filtered {}
 
 .map-child {
   position: absolute;
@@ -237,42 +241,38 @@ body {
 
 .settings-hud {
   position: absolute;
-  right: 0%;
-  transform: translateX(-5%);
-  top: 0;
-  width: auto;
-  z-index: 50000;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0%;
+  z-index: 20000;
   display: flex;
+  flex-direction: column;
   overflow: visible;
   font-family: monospace;
-  display: inline-flex;
-  height: 30px;
-}
-
-.settings-category {
-  user-select: none;
   min-width: 120px;
-  color: white;
-  height: 30px;
-  background-color: rgba(0, 0, 0, 0.7);
 }
 
-.settings-title {
+.settings-list tr td:first-child {
+  text-align: right;
+  padding-right: 4px;
+}
+
+.checkbox-setting {
   display: flex;
-  font-size: 20px;
   align-items: center;
-  justify-content: right;
-  height: 30px;
-  padding: 0 8px;
 }
 
-.settings-widget {
-  font-size: 16px;
-  background-color: rgba(0, 0, 0, 0.7);
+.checkbox-setting label {
+  cursor: pointer;
+  flex: 1;
 }
 
-#settings-opacity-slider {
-  width: 210px;
+.checkbox-setting input {
+  cursor: pointer;
+}
+
+#settingsOpacitySlider {
+  width: 100px;
 }
 
 
@@ -303,6 +303,11 @@ body {
 .items-category:not(.closed):hover, .items-category.open {
   height: 330px;
   transform: translateY(calc(30px - 100%));
+}
+
+.settings-hud .items-category:not(.closed):hover, .settings-hud .items-category.open {
+  height: 330px;
+  transform: none;
 }
 
 
@@ -513,16 +518,6 @@ a.disabled {
     padding: 0 8px;
   }
 
-  .settings-title {
-    font-size: 16px;
-    height: 30px;
-    padding: 0 8px;
-  }
-
-  #settings-opacity-slider {
-    width: 170px;
-  }
-
   .items-category {
     min-width: 100px;
     flex: 1;
@@ -530,5 +525,9 @@ a.disabled {
     transform: translateY(0);
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .settings-hud .items-category.closed {
+    max-height: 30px !important;
   }
 }

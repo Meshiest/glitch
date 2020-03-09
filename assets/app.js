@@ -1,20 +1,46 @@
 const $ = document.querySelector.bind(document);
 const $$ = q => Array.from(document.querySelectorAll(q));
 
+let cssRules, filterRule, notFilterRule;
 let cursor, startScroll, start, cursorPos;
 let zoom = 1.00;
 let focused = false;
 let authed = false, authUser, admin;
 let launchTime = Date.now();
 let currMap;
-let unfilteredOpacity = 1.0;
+let unfilteredOpacity = localStorage.filterOpacity ? parseFloat(localStorage.filterOpacity) : 1.0;
 const things = {};
 
 // to be implemented - better filtering,
 // although it could also be done via CSS properties
 // and parent classes
+
+const loadFilter = (name, defaultValue) =>
+  !localStorage[name] ? defaultValue : localStorage[name] === 'true';
+
+
 const filters = {
-  negative: true,
+  filterNegative: loadFilter('filterNegative', true),
+  filterPositive: loadFilter('filterPositive', false),
+};
+
+// setup options toggles
+const initToggle = (id, filter, options={}) => {
+  const input = document.getElementById(id);
+  const updateToggle = () => {
+    $(`label[for=${id}]`).innerText = filters[filter] ? 'on' : 'off';
+    input.checked = filters[filter];
+  };
+
+  input.addEventListener('change', e => {
+    filters[filter] = localStorage[filter] = e.target.checked;
+    updateToggle();
+
+    if (options.getData)
+      getData(currMap, true);
+  });
+
+  updateToggle();
 };
 
 let countdownTimeout, mapTimeout;
@@ -47,7 +73,7 @@ function setMap(isWorldsEdge) {
   getData(isWorldsEdge);
 
   // reset opacity slider
-  document.getElementById("settings-opacity-slider").value = 100;
+  $('#settingsOpacitySlider').value = 100;
 
   // trigger a countdown if it's the right week
   clearTimeout(countdownTimeout);
@@ -185,7 +211,10 @@ function addMarker(data) {
     data.color = 'gold';
 
   // if there's enough downvotes (20) and the ratio is bad enough, hide this thing
-  if (data.bad > 10 && data.good/data.bad < 0.3 && filters.negative)
+  if (data.bad > 10 && data.good/data.bad < 0.3 && filters.filterNegative)
+    return;
+
+  if ((data.good < 1 || data.bad !== 0 && data.good/data.bad < 0.5) && filters.filterPositive)
     return;
 
   const meta = things[data.thing];
@@ -330,7 +359,7 @@ function postData(short, pos, data) {
 }
 
 // fetch all the data from the server
-function getData(isWorldsEdge) {
+function getData(isWorldsEdge, useCache=false) {
   const map = isWorldsEdge ? 0 : 1;
   const renderData = r => {
     const overlay = $('.overlay');
@@ -343,7 +372,7 @@ function getData(isWorldsEdge) {
   };
 
   // check if we fetched this data less than 10 seconds ago
-  if (Date.now() - dataAge[map] < 10000) {
+  if (Date.now() - dataAge[map] < 10000 || useCache) {
     launchTime = dataAge[map];
     renderData(dataCache[map]);
     return;
@@ -463,26 +492,23 @@ const itemInit = el => {
       // remove focus on other kinds of markers
       $$(`.filtered:not([data-short="${short}"])`)
         .forEach(el => el.classList.remove('filtered'));
-      // reset opacity for all markers
-      $$(`.marker`)
-        .forEach(el => el.style.opacity = unfilteredOpacity);
 
       // toggle focus on this kind of marker based on the menu focus
       // (adding new items prevents us from using .toggle)
       $$(`[data-short="${short}"]`)
-        .forEach(el => el.classList[isFiltered ? 'remove' : 'add']('filtered'));        
-      // update opacity for this kind of marker
-      $$(`.marker[data-short="${short}"]`)
-        .forEach(el => el.style.opacity = isFiltered ? unfilteredOpacity : 1);
+        .forEach(el => el.classList[isFiltered ? 'remove' : 'add']('filtered'));
     }
   }
 }
 
 function updateUnfilteredOpacity(value){
   unfilteredOpacity = value/100;
-  $$('.marker.normal:not(.filtered)').forEach(el =>
-    el.style.opacity = unfilteredOpacity
-  );
+  localStorage.filterOpacity = unfilteredOpacity;
+
+  // apply style to all markers
+  filteredRule.style.opacity = 1;
+  notFilteredRule.style.opacity = unfilteredOpacity > 0 ? unfilteredOpacity : 1;
+  notFilteredRule.style.display = unfilteredOpacity === 0 ? 'none' : 'flex';
 }
 
 function cancelAdd(e) {
@@ -725,8 +751,19 @@ document.addEventListener('DOMContentLoaded', e => {
   $('#cancelButton').addEventListener('click', cancelAdd);
   $('#closeButton').addEventListener('click', () => $('.preview-menu').style.display = 'none');
 
+  const cssRules = Array.from(document.styleSheets[0].cssRules);
+
+  filteredRule = cssRules.find(r => r.selectorText = '.map-child .marker.normal.filtered');
+  notFilteredRule = cssRules.find(r => r.selectorText = '.map-child .marker.normal:not(.filtered)');
+
+  $('#settingsOpacitySlider').setAttribute('value', Number(unfilteredOpacity * 100));
+  $('#settingsOpacitySlider').addEventListener('change', e => updateUnfilteredOpacity(e.target.value));
+
   $('.map-button.kc').onclick = () => setMap(true);
   $('.map-button.we').onclick = () => setMap(false);
+
+  initToggle('settingsHideNegative', 'filterNegative', {getData: true});
+  initToggle('settingsOnlyPositive', 'filterPositive', {getData: true});
 
   $$('.items-list .item').forEach(i =>
     i.addEventListener('click', itemInit(i)));

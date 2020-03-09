@@ -91,11 +91,30 @@
       </div>
     </div>
     <div class="settings-hud">
-      <div class="settings-category">
-        <div class="settings-title">unselected opacity</div>
-        <div class="settings-widget">
-          <input id="settings-opacity-slider" type="range" min="0" max="100" value="100" onchange="updateUnfilteredOpacity(this.value)">
-        </div>
+      <div class="items-category">
+        <div class="items-title">options</div>
+        <table class="settings-list">
+          <tr>
+            <td>selected opacity</td>
+            <td><input id="settingsOpacitySlider" type="range" min="0" max="100" step="10"></td>
+          </tr>
+          <tr>
+            <td>hide negative</td>
+            <td>
+              <div class="checkbox-setting">
+                <input id="settingsHideNegative" type="checkbox"><label for="settingsHideNegative">on</label>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>only positive</td>
+            <td>
+              <div class="checkbox-setting">
+                <input id="settingsOnlyPositive" type="checkbox"><label for="settingsOnlyPositive">off</label>
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
     <div class="items-hud">
@@ -114,16 +133,13 @@
           <div data-short="hav" data-name="havok" class="item ar ammo-energy">hav</div>
           <div data-short="spit" data-name="spitfire" class="item lmg ammo-heavy">spit</div>
           <div data-short="star" data-name="l-star" class="item lmg ammo-energy">star</div>
-          <!-- <div data-short="devo" data-name="devotion" class="item lmg ammo-carepackage">devo</div> -->
           <div data-short="long" data-name="longbow" class="item sr ammo-sniper">long</div>
           <div data-short="trip" data-name="triple-take" class="item sr ammo-sniper">trip</div>
-          <!-- <div data-short="krab" data-name="kraber" class="item sr ammo-carepackage">krab</div> -->
           <div data-short="char" data-name="charge rifle" class="item sr ammo-sniper">char</div>
           <div data-short="sent" data-name="sentinel" class="item sr ammo-sniper">sent</div>
           <div data-short="pk" data-name="peacekeeper" class="item sg ammo-shotgun">pk</div>
           <div data-short="eva" data-name="eva-8" class="item sg ammo-shotgun">eva</div>
           <div data-short="moz" data-name="mozambique" class="item sg ammo-shotgun">moz</div>
-          <!-- <div data-short="mast" data-name="mastiff" class="item sg ammo-carepackage">mast</div> -->
           <div data-short="re45" data-name="re-45" class="item handgun ammo-light">re45</div>
           <div data-short="2020" data-name="p2020" class="item handgun ammo-light">2020</div>
           <div data-short="wing" data-name="wingman" class="item handgun ammo-heavy">wing</div>
