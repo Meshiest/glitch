@@ -7,6 +7,7 @@ let focused = false;
 let authed = false, authUser, admin;
 let launchTime = Date.now();
 let currMap;
+let unfilteredOpacity = 1.0;
 const things = {};
 
 // to be implemented - better filtering,
@@ -44,6 +45,9 @@ function setMap(isWorldsEdge) {
   $('.map-parent').setAttribute('data-map', isWorldsEdge ? 'we' : 'kc');
   cancelAdd();
   getData(isWorldsEdge);
+
+  // reset opacity slider
+  document.getElementById("settings-opacity-slider").value = 100;
 
   // trigger a countdown if it's the right week
   clearTimeout(countdownTimeout);
@@ -459,13 +463,26 @@ const itemInit = el => {
       // remove focus on other kinds of markers
       $$(`.filtered:not([data-short="${short}"])`)
         .forEach(el => el.classList.remove('filtered'));
+      // reset opacity for all markers
+      $$(`.marker`)
+        .forEach(el => el.style.opacity = unfilteredOpacity);
 
       // toggle focus on this kind of marker based on the menu focus
       // (adding new items prevents us from using .toggle)
       $$(`[data-short="${short}"]`)
-        .forEach(el => el.classList[isFiltered ? 'remove' : 'add']('filtered'));
+        .forEach(el => el.classList[isFiltered ? 'remove' : 'add']('filtered'));        
+      // update opacity for this kind of marker
+      $$(`.marker[data-short="${short}"]`)
+        .forEach(el => el.style.opacity = isFiltered ? unfilteredOpacity : 1);
     }
   }
+}
+
+function updateUnfilteredOpacity(value){
+  unfilteredOpacity = value/100;
+  $$('.marker.normal:not(.filtered)').forEach(el =>
+    el.style.opacity = unfilteredOpacity
+  );
 }
 
 function cancelAdd(e) {

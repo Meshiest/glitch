@@ -206,6 +206,7 @@ body {
 .marker.normal:hover, .marker.normal.filtered {
   transform: scale(2) translate(-25%, calc(-74% - 0.25rem));
   cursor: pointer;
+  opacity: 1 !important;
   z-index: 20000;
 }
 .marker.normal::after {
@@ -232,6 +233,46 @@ body {
   border-color: #0f0;
   z-index: 10000;
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.settings-hud {
+  position: absolute;
+  right: 0%;
+  transform: translateX(-5%);
+  top: 0;
+  width: auto;
+  z-index: 50000;
+  display: flex;
+  overflow: visible;
+  font-family: monospace;
+  display: inline-flex;
+  height: 30px;
+}
+
+.settings-category {
+  user-select: none;
+  min-width: 120px;
+  color: white;
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.settings-title {
+  display: flex;
+  font-size: 20px;
+  align-items: center;
+  justify-content: right;
+  height: 30px;
+  padding: 0 8px;
+}
+
+.settings-widget {
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#settings-opacity-slider {
+  width: 210px;
 }
 
 
@@ -263,6 +304,7 @@ body {
   height: 330px;
   transform: translateY(calc(30px - 100%));
 }
+
 
 .items-title {
   display: flex;
@@ -469,6 +511,16 @@ a.disabled {
     font-size: 16px;
     height: 30px;
     padding: 0 8px;
+  }
+
+  .settings-title {
+    font-size: 16px;
+    height: 30px;
+    padding: 0 8px;
+  }
+
+  #settings-opacity-slider {
+    width: 170px;
   }
 
   .items-category {
