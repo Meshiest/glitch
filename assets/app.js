@@ -22,6 +22,7 @@ const loadFilter = (name, defaultValue) =>
 const filters = {
   filterNegative: loadFilter('filterNegative', true),
   filterPositive: loadFilter('filterPositive', false),
+  filterGuns: loadFilter('filterGuns', false),
 };
 
 // setup options toggles
@@ -211,13 +212,18 @@ function addMarker(data) {
     data.color = 'gold';
 
   // if there's enough downvotes (20) and the ratio is bad enough, hide this thing
-  if (data.bad > 10 && data.good/data.bad < 0.3 && filters.filterNegative)
+  if (data.bad > 3 && data.good/data.bad < 0.3 && filters.filterNegative)
     return;
 
   if ((data.good < 1 || data.bad !== 0 && data.good/data.bad < 0.5) && filters.filterPositive)
     return;
 
+
   const meta = things[data.thing];
+
+  if (meta && meta.ammo && filters.filterGuns)
+    return;
+
   const el = document.createElement('div');
   el.className = `marker ${meta && meta.game ? data.thing : 'normal'} ${meta && meta.ammo || ''} ${data.color || ''}`;
   el.setAttribute('x', data.x);
@@ -764,6 +770,7 @@ document.addEventListener('DOMContentLoaded', e => {
 
   initToggle('settingsHideNegative', 'filterNegative', {getData: true});
   initToggle('settingsOnlyPositive', 'filterPositive', {getData: true});
+  initToggle('settingsHideGuns', 'filterGuns', {getData: true});
 
   $$('.items-list .item').forEach(i =>
     i.addEventListener('click', itemInit(i)));
