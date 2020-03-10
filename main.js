@@ -209,9 +209,9 @@ app.post('/api/data', ensureAuthenticated, async(req, res) => {
   }
 
   const banned = isBanned(name);
-  if (banned) {
-    return res.status(401).json({message: 'Unauthorized'});
-  }
+  // if (banned) {
+  //   return res.status(401).json({message: 'Unauthorized'});
+  // }
 
   // one item per minute for untrusted users
   const shouldCooldown = config['use-auth'] && !_.get(req.user, 'trusted') && !admin;
