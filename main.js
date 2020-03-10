@@ -265,9 +265,9 @@ app.post('/api/vote', ensureAuthenticated, (req, res) => {
   const { uuid, vote } = req.body;
 
   const banned = isBanned(voter);
-  if (banned) {
-    return res.status(401).json({message: 'Unauthorized'});
-  }
+  // if (banned) {
+  //   return res.status(401).json({message: 'Unauthorized'});
+  // }
 
   if (vote !== -1 && vote !== 1 && vote !== 0)
     return res.status(422).json({message: 'Invalid Vote'});
@@ -298,9 +298,9 @@ app.post('/api/delete', ensureAuthenticated, (req,res) => {
   const isNotAdmin = config['use-auth'] && !admin;
 
   const banned = isBanned(user);
-  if (banned) {
-    return res.status(401).json({message: 'Unauthorized'});
-  }
+  // if (banned) {
+  //   return res.status(401).json({message: 'Unauthorized'});
+  // }
 
   // prevent users from deleting data after the event
   if (isNotAdmin && now > END_DATE) {
