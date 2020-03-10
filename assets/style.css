@@ -320,7 +320,7 @@ body {
   padding: 0 8px;
 }
 
-.items-list {
+.items-list, .admin-list {
   font-size: 16px;
   max-height: 300px;
   overflow-y: auto;
@@ -419,7 +419,7 @@ body {
   transform: translate(12px, calc(-1.25rem - 7px - 100%));
 }
 
-.menu a, .menu a:visited, .top-hud a, .top-hud a:visited {
+.menu a, .menu a:visited, .top-hud a, .top-hud a:visited, a:visited {
   color: #ccf;
 }
 
@@ -503,6 +503,27 @@ a.disabled {
 .rounds a.unselected {
   font-size: 12px;
   text-decoration: none;
+}
+
+#clearLink {
+  text-align: center;
+}
+
+.admin-table {
+  font-size: 12px;
+}
+
+.admin-table td {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-table td.left {
+  text-align: left;
+}
+
+.admin-table td.max {
+  width: 100%;
 }
 
 @media screen and (min-width: 1200px) {

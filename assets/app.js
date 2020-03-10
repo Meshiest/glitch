@@ -133,6 +133,15 @@ function calcAge(ago) {
   return agoText;
 }
 
+// remove all children from an element
+function emptyElement(el) {
+  let child = el.lastElementChild;
+  while (child) {
+    el.removeChild(child);
+    child = el.lastElementChild;
+  }
+}
+
 // check semi frequently for new map
 function mapCheck() {
   // if we're already on kings canyon, this check is useless. exit.
@@ -379,13 +388,63 @@ function postData(short, pos, data) {
 function getData(isWorldsEdge, useCache=false) {
   const map = isWorldsEdge ? 0 : 1;
   const renderData = r => {
-    const overlay = $('.overlay');
-    let child = overlay.lastElementChild;
-    while (child) {
-      overlay.removeChild(child);
-      child = overlay.lastElementChild;
-    }
+    emptyElement($('.overlay'));
     r.forEach(el => addMarker(el));
+
+    if (admin) {
+      emptyElement($('.admin-table'));
+      const users = Array.from(new Set(r.map(d => d.user)));
+      const table = Object.fromEntries(users.map(u => [u, {ago: Infinity, markers: [], good: 0, bad: 0}]));
+      $('#clearLink').style.display = 'none';
+      r.forEach(d => {
+        table[d.user].ago = Math.min(d.ago, table[d.user].ago);
+        table[d.user].good += d.good;
+        table[d.user].bad += d.bad;
+        table[d.user].markers.push(d);
+      });
+      users
+        // sort by number of markers
+        .sort((a, b) => table[b].markers.length - table[a].markers.length)
+        // create each row
+        .forEach(u => {
+          const row = document.createElement('tr');
+          const cell = (text, className='') => {
+            const el = document.createElement('td');
+            if (typeof text !== 'object')
+              el.innerText = text;
+            else
+              el.appendChild(text);
+            el.className = className;
+            row.appendChild(el);
+          };
+          const link = document.createElement('a');
+          link.innerText = u;
+          link.href = '#';
+          link.onclick = e => {
+            e.preventDefault();
+            emptyElement($('.overlay'));
+            table[u].markers.forEach(el => addMarker(el, true));
+            $('#clearLink').style.display = 'block';
+            $('#clearLink').innerText = 'clear ' + u;
+            $('#clearLink').onclick = async e => {
+              e.preventDefault();
+              if (prompt('type ' + u).toLowerCase() !== u.toLowerCase())
+                return;
+              for (const m of table[u].markers) {
+                await post('/api/delete', { uuid: m.uuid });
+                $('.overlay').removeChild($(`.marker[data*="${m.uuid}"]`));
+              }
+            };
+          };
+          cell(link, 'left max');
+          cell(calcAge(table[u].ago), 'left');
+          cell('+'+table[u].good, 'good');
+          cell('-'+table[u].bad, 'bad');
+          cell(table[u].markers.length);
+          $('.admin-table').appendChild(row);
+
+        });
+    }
   };
 
   // check if we fetched this data less than 10 seconds ago
@@ -426,6 +485,8 @@ function authCheck() {
         $('#logout').style.display = 'inline';
         authUser = r.user;
         admin = r.admin;
+        $('#adminMenu').style.display = admin ? 'block' : 'none';
+
       } else {
         $('.addition-menu.no-auth').style.display = 'block';
         $('.addition-menu.authed').style.display = 'none';
