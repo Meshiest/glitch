@@ -396,6 +396,7 @@ function getData(isWorldsEdge, useCache=false) {
       const users = Array.from(new Set(r.map(d => d.user)));
       const table = Object.fromEntries(users.map(u => [u, {ago: Infinity, markers: [], good: 0, bad: 0}]));
       $('#clearLink').style.display = 'none';
+      $('#banLink').style.display = 'none';
       r.forEach(d => {
         table[d.user].ago = Math.min(d.ago, table[d.user].ago);
         table[d.user].good += d.good;
@@ -428,12 +429,20 @@ function getData(isWorldsEdge, useCache=false) {
             $('#clearLink').innerText = 'clear ' + u;
             $('#clearLink').onclick = async e => {
               e.preventDefault();
-              if (prompt('type ' + u).toLowerCase() !== u.toLowerCase())
+              if (prompt(`type "${u}"`).toLowerCase() !== u.toLowerCase())
                 return;
               for (const m of table[u].markers) {
                 await post('/api/delete', { uuid: m.uuid });
                 $('.overlay').removeChild($(`.marker[data*="${m.uuid}"]`));
               }
+            };
+            $('#banLink').style.display = 'block';
+            $('#banLink').innerText = 'ban ' + u;
+            $('#banLink').onclick = e => {
+              e.preventDefault();
+              if (prompt(`type "ban ${u}"`).toLowerCase() !== 'ban ' + u.toLowerCase())
+                return;
+              post('/api/ban', { target: u });
             };
           };
           cell(link, 'left max');

@@ -122,6 +122,31 @@ if (config['use-auth']) {
       });
     })
   });
+
+  app.post('/api/ban', ensureAuthenticated, (req, res) => {
+    const admin = isAdmin(_.get(req.user, 'name'));
+
+    if (!admin) {
+      return res.status(401).json({message: 'Unauthorized'});
+    }
+
+    const { target } = req.body;
+
+    table.users.findOneAndUpdate(
+      {name: target},
+      {$bit: {
+        banned: {xor: 1},
+      }},
+      (err, user) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({message: 'error'});
+          return;
+        }
+        res.json({message: 'ok'});
+      }
+    );
+  });
 } else {
   ensureAuthenticated = (req, res, next) => next();
 
@@ -129,6 +154,10 @@ if (config['use-auth']) {
     res.json({isAuth: true, user: null, admin: true});
   });
 }
+
+// determine if a user is banned
+const isBanned = name => new Promise(resolve =>
+  table.things.findOne({ uuid }, (err, doc) => !!err || !!doc.banned));
 
 // input validation
 function validateLoot(data) {
@@ -166,16 +195,22 @@ function punish(user) {
 }
 
 // posting new data to the map
-app.post('/api/data', ensureAuthenticated, (req, res) => {
+app.post('/api/data', ensureAuthenticated, async(req, res) => {
   if(!validateLoot(req.body)) {
     return res.status(422).json({message: 'Invalid Arguments'});
   }
 
   const now = Date.now();
-  const admin = isAdmin(_.get(req.user, 'name'));
+  const name = _.get(req.user, 'name');
+  const admin = isAdmin(name);
 
   if (config['use-auth'] && config['only-admins'] && !admin) {
     return res.status(401).json({message: 'Admin only mode'});
+  }
+
+  const banned = isBanned(name);
+  if (banned) {
+    return res.status(401).json({message: 'Unauthorized'});
   }
 
   // one item per minute for untrusted users
@@ -229,6 +264,11 @@ app.post('/api/vote', ensureAuthenticated, (req, res) => {
   const voter = _.get(req.user, 'name', 'guest');
   const { uuid, vote } = req.body;
 
+  const banned = isBanned(voter);
+  if (banned) {
+    return res.status(401).json({message: 'Unauthorized'});
+  }
+
   if (vote !== -1 && vote !== 1 && vote !== 0)
     return res.status(422).json({message: 'Invalid Vote'});
 
@@ -254,8 +294,13 @@ app.post('/api/delete', ensureAuthenticated, (req,res) => {
   const user = _.get(req.user, 'name', 'guest');
   const { uuid } = req.body;
 
-  const admin = isAdmin(_.get(req.user, 'name'));
+  const admin = isAdmin(user);
   const isNotAdmin = config['use-auth'] && !admin;
+
+  const banned = isBanned(user);
+  if (banned) {
+    return res.status(401).json({message: 'Unauthorized'});
+  }
 
   // prevent users from deleting data after the event
   if (isNotAdmin && now > END_DATE) {
@@ -346,8 +391,8 @@ app.get('/api/data', (req, res) => {
       vote: {$sum: {$cond: [{$eq: ['$votes.voter', _.get(req.user, 'name', 'guest')]}, '$votes.vote', 0]}},
 
       // vote counts
-      good: {$sum: {$cond: [{$eq: ['$votes.vote', 1]}, 1, 0]}}, // number of +1's
-      bad: {$sum: {$cond: [{$eq: ['$votes.vote', -1]}, 1, 0]}}, // number of -1's
+      good: {$sum: {$cond: [{$and: [{$ne: ['$votes.voter', '$user']}, {$eq: ['$votes.vote', 1]}]}, 1, 0]}}, // number of +1's
+      bad: {$sum: {$cond: [{$and: [{$ne: ['$votes.voter', '$user']}, {$eq: ['$votes.vote', -1]}]}, 1, 0]}}, // number of -1's
     }},
     {$project: {_id: 0}}, // remove the _id field
     {$sort: {'y': 1}}, // sort from top to bottom
