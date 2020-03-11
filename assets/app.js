@@ -404,7 +404,10 @@ function getData(isWorldsEdge, useCache=false) {
       });
       users
         // sort by number of markers
-        .sort((a, b) => table[b].markers.length - table[a].markers.length)
+        .sort((a, b) => {
+          const diff = table[b].markers.length - table[a].markers.length;
+          return diff === 0 ? table[b].ago - table[a].ago : diff;
+        })
         // create each row
         .forEach(u => {
           const row = document.createElement('tr');
