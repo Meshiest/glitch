@@ -608,6 +608,7 @@ function updateUnfilteredOpacity(value){
 
   // apply style to all markers
   filteredRule.style.opacity = 1;
+  filteredRule.style.display = 'flex';
   notFilteredRule.style.opacity = unfilteredOpacity > 0 ? unfilteredOpacity : 1;
   notFilteredRule.style.display = unfilteredOpacity === 0 ? 'none' : 'flex';
 }
@@ -851,9 +852,10 @@ document.addEventListener('DOMContentLoaded', e => {
 
   const cssRules = Array.from(document.styleSheets[0].cssRules);
 
-  filteredRule = cssRules.find(r => r.selectorText = '.map-child .marker.normal.filtered');
-  notFilteredRule = cssRules.find(r => r.selectorText = '.map-child .marker.normal:not(.filtered)');
-  markersRule = cssRules.find(r => r.selectorText = '.map-child .marker[data-short]');
+  filteredRule = cssRules.find(r => r.selectorText === '.map-child .marker.normal.filtered');
+  notFilteredRule = cssRules.find(r => r.selectorText === '.map-child .marker.normal:not(.filtered)');
+  markersRule = cssRules.find(r => r.selectorText === '.map-child .marker[data-short]');
+  console.log(filteredRule, notFilteredRule);
 
   $('#settingsOpacitySlider').setAttribute('value', Number(unfilteredOpacity * 100));
   $('#settingsOpacitySlider').addEventListener('change', e => updateUnfilteredOpacity(e.target.value));
