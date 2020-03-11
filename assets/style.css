@@ -41,6 +41,7 @@ body {
 
 .map-child .marker.normal:not(.filtered) {}
 .map-child .marker.normal.filtered {}
+.map-child .marker[data-short] {}
 
 .map-child {
   position: absolute;

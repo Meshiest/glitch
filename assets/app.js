@@ -1,7 +1,7 @@
 const $ = document.querySelector.bind(document);
 const $$ = q => Array.from(document.querySelectorAll(q));
 
-let cssRules, filterRule, notFilterRule;
+let cssRules, filterRule, notFilterRule, markersRule;
 let cursor, startScroll, start, cursorPos;
 let zoom = 1.00;
 let focused = false;
@@ -687,6 +687,7 @@ function touchDownListener(e) {
     dragDistance = 0;
     clickView(touch.target, touch.pageX, touch.pageY);
   } else if (e.touches.length === 2) {
+    markersRule.style.display = 'none';
     multiTouchStart = multiTouchPos = [
       shiftCoords(e.touches[0].pageX, e.touches[0].pageY),
       shiftCoords(e.touches[1].pageX, e.touches[1].pageY),
@@ -743,6 +744,7 @@ function touchUpListener(e) {
 
     clickUpView(...cursor, true);
   }
+  markersRule.style.display = 'flex';
   multiTouchStart = multiTouchPos = startScroll = undefined;
 }
 
@@ -836,6 +838,7 @@ document.addEventListener('DOMContentLoaded', e => {
 
   filteredRule = cssRules.find(r => r.selectorText = '.map-child .marker.normal.filtered');
   notFilteredRule = cssRules.find(r => r.selectorText = '.map-child .marker.normal:not(.filtered)');
+  markersRule = cssRules.find(r => r.selectorText = '.map-child .marker[data-short]');
 
   $('#settingsOpacitySlider').setAttribute('value', Number(unfilteredOpacity * 100));
   $('#settingsOpacitySlider').addEventListener('change', e => updateUnfilteredOpacity(e.target.value));
