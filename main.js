@@ -143,7 +143,11 @@ if (config['use-auth']) {
           res.status(500).json({message: 'error'});
           return;
         }
-        res.json({message: 'ok'});
+        table.votes.deleteMany({ voter: target }, (err, doc) => {
+          if (err)
+            return res.status(500).json({message: 'Error deleting votes'});
+          res.json({message: 'ok'});
+        });
       }
     );
   });
