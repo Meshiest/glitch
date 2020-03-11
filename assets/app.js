@@ -18,10 +18,11 @@ const things = {};
 const loadFilter = (name, defaultValue) =>
   !localStorage[name] ? defaultValue : localStorage[name] === 'true';
 
-
+blocklist = localStorage.blocklist ? JSON.parse(localStorage.blocklist) : [];
 const filters = {
   filterNegative: loadFilter('filterNegative', true),
   filterPositive: loadFilter('filterPositive', false),
+  filterBlocked: loadFilter('filterBlocked', true),
   filterGuns: loadFilter('filterGuns', true),
   filterArmor: loadFilter('filterArmor', true),
   filterEquip: loadFilter('filterEquip', true),
@@ -234,6 +235,9 @@ function addMarker(data, nofilter) {
   if (!filters.filterEquip && attach.includes(data.thing) && !nofilter)
     return;
 
+  if (filters.filterBlocked && blocklist.includes(data.user) && !nofilter)
+    return;
+
   const meta = things[data.thing];
 
   if (meta && meta.ammo && !filters.filterGuns && !nofilter)
@@ -275,6 +279,18 @@ function clickMarker(el) {
   $('#percent').innerText = (data.good + data.bad === 0 ? '?%' : Math.round(data.good/(data.good+data.bad)*100) + '%');
   $('#redditUser').innerText = data.user;
   $('#redditUser').href = 'https://reddit.com/u/' + data.user;
+  $('#blockButton').innerText = blocklist.includes(data.user) ? 'unblock' : 'block';
+  $('#blockButton').onclick = e => {
+    e.preventDefault();
+    if (blocklist.includes(data.user)) {
+      blocklist.splice(blocklist.indexOf(data.user), 1);
+    }
+    else
+      blocklist.push(data.user);
+    $('#blockButton').innerText = blocklist.includes(data.user) ? 'unblock' : 'block';
+    localStorage.blocklist = JSON.stringify(blocklist);
+    getData(currMap, true);
+  };
 
   $('#age').innerText = calcAge(data.ago);
 
@@ -851,6 +867,7 @@ document.addEventListener('DOMContentLoaded', e => {
 
   initToggle('settingsHideNegative', 'filterNegative', {getData: true});
   initToggle('settingsOnlyPositive', 'filterPositive', {getData: true});
+  initToggle('settingsBlocker', 'filterBlocked', {getData: true});
   initToggle('settingsHideGuns', 'filterGuns', {getData: true});
   initToggle('settingsHideEquip', 'filterEquip', {getData: true});
   initToggle('settingsHideArmor', 'filterArmor', {getData: true});
