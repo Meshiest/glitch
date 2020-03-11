@@ -148,6 +148,8 @@ if (config['use-auth']) {
             return res.status(500).json({message: 'Error deleting votes'});
           res.json({message: 'ok'});
         });
+
+        res.json({message: 'ok'});
       }
     );
   });
@@ -189,7 +191,8 @@ function validateLoot(data) {
   }
 
   if (ARMOR.includes(data.id) && data.color !== 'gold' && data.color !== 'purple') {
-    return false;
+    if (data.id === 'body' && data.color !== 'blue')
+      return false;
   }
 
   return true;

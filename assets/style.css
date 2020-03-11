@@ -390,6 +390,9 @@ body {
 .item[data-short="fire"], .selected-item[data-short="fire"] span,
 .item[data-short="chok"], .selected-item[data-short="chok"] span,
 .item[data-short="hamm"], .selected-item[data-short="hamm"] span{color: #e700eb;}
+
+.item.blue, .selected-item.blue span{color: #94b2f2;}
+
 .marker.purple,
 .marker[data-short="8x"],
 .marker[data-short*="mag"],
@@ -397,6 +400,8 @@ body {
 .marker[data-short="fire"],
 .marker[data-short="chok"],
 .marker[data-short="hamm"]{background: #e700eb;}
+
+.marker.blue{background: #94b2f2;}
 
 .menu {
   font-family: monospace;
