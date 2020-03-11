@@ -52,6 +52,7 @@ body {
   max-width: 2048px;
   transform: translate(-50%, -50%);
   overflow: hidden;
+  transition: opacity 0.2s ease;
 }
 
 .map-child .map, .map-child .overlay {
@@ -64,12 +65,6 @@ body {
   width: 2048px;
   height: 2048px;
   z-index: 2;
-}
-
-.side-nav {
-  display: none;
-  width: 200px;
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .cursor {
@@ -250,6 +245,11 @@ body {
   overflow: visible;
   font-family: monospace;
   min-width: 120px;
+  font-size: 1.2rem;
+}
+
+.debug-hud {
+  color: white;
 }
 
 .settings-list tr td:first-child {
@@ -272,7 +272,7 @@ body {
 }
 
 #settingsOpacitySlider {
-  width: 100px;
+  width: 10rem;
 }
 
 
@@ -287,42 +287,42 @@ body {
   overflow: visible;
   font-family: monospace;
   display: inline-flex;
-  height: 30px;
+  height: 2rem;
 }
 
 .items-category {
   user-select: none;
-  min-width: 120px;
+  min-width: 10rem;
   color: white;
-  height: 30px;
+  height: 2rem;
   transform: translateY(0);
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.7);
 }
 
 .items-category:not(.closed):hover, .items-category.open {
-  height: 330px;
-  transform: translateY(calc(30px - 100%));
+  height: 22rem;
+  transform: translateY(calc(2rem - 100%));
 }
 
 .settings-hud .items-category:not(.closed):hover, .settings-hud .items-category.open {
-  height: 330px;
+  height: 22rem;
   transform: none;
 }
 
 
 .items-title {
   display: flex;
-  font-size: 20px;
+  font-size: 1.2rem;
   align-items: center;
   justify-content: center;
-  height: 30px;
+  height: 2rem;
   padding: 0 8px;
 }
 
 .items-list, .admin-list {
-  font-size: 16px;
-  max-height: 300px;
+  font-size: 1.1rem;
+  max-height: 20rem;
   overflow-y: auto;
 }
 
@@ -333,7 +333,7 @@ body {
 }
 
 .items-list .item::before {
-  font-size: 10px;
+  font-size: .7rem;
   position: absolute;
   left: 4px;
   top: 4px;
@@ -410,7 +410,7 @@ body {
   z-index: 10000;
   color: white;
   padding: 7px;
-  width: 240px;
+  width: 15rem;
   background-color: rgba(0, 0, 0, 0.7);
   position: absolute;
 }
@@ -556,21 +556,21 @@ a.disabled {
 @media screen and (max-width: 800px) {
   .items-title {
     font-size: 16px;
-    height: 30px;
+    height: 2rem;
     padding: 0 8px;
   }
 
   .items-category {
-    min-width: 100px;
+    min-width: 10rem;
     flex: 1;
-    height: 30px;
+    height: 2rem;
     transform: translateY(0);
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.7);
   }
 
   .settings-hud .items-category.closed {
-    max-height: 30px !important;
+    max-height: 2rem !important;
   }
 }
 
@@ -580,11 +580,11 @@ a.disabled {
   }
 
   .items-category {
-    min-width: 70px;
+    min-width: 10rem;
   }
 
   .settings-hud .items-category.closed {
-    max-height: 30px !important;
+    max-height: 2rem !important;
   }
 
   .items-list .item::before {

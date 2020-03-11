@@ -143,26 +143,6 @@ function emptyElement(el) {
   }
 }
 
-// check semi frequently for new map
-function mapCheck() {
-  // if we're already on kings canyon, this check is useless. exit.
-  if (!currMap)
-    return;
-
-  // prevent a bunch of these from stacking up
-  clearTimeout(mapTimeout);
-
-  // determine if it's kings canyon day
-  if (isSecondWeek()) {
-    setMap(false);
-  } else {
-
-    // if we're not within an hour of the release time, check every 5 minutes
-    // otherwise check every second :)
-    mapTimeout = setTimeout(mapCheck, SECOND_WEEK - Date.now() > HOUR ? 5*MIN : 1000);
-  }
-}
-
 const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 const isiOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
@@ -201,7 +181,6 @@ function modZoom(d) {
   $$('.menu').forEach(m => m.style.zoom = ((1 / zoom) * 100) + '%');
   setMarkerPos($('.preview-menu'), true);
   $$('.marker').forEach(m => setMarkerPos(m));
-  $('#zoomValue').innerText = Math.round(zoom * 100) + '%';
 }
 
 // move a marker based on zoom
@@ -519,7 +498,7 @@ function authCheck() {
       }
       // refresh
       setMap(!isSecondWeek());
-      mapCheck();
+      $('.map-child').style.opacity = 1;
     })
     // handle offline message
     .catch(console.error);
@@ -702,11 +681,6 @@ function touchDownListener(e) {
 
   if (e.touches.length === 1) {
     const touch = e.touches[0];
-    // make it full screen please!
-    try {
-      if(document.documentElement.requestFullscreen)
-        document.documentElement.requestFullscreen();
-    } catch (e) {console.warn(e);}
     dragDistance = 0;
     clickView(touch.target, touch.pageX, touch.pageY);
   } else if (e.touches.length === 2) {
@@ -839,8 +813,6 @@ function touchMoveListener(e) {
 }
 
 document.addEventListener('DOMContentLoaded', e => {
-  $('#zoomPlus').addEventListener('click', zoomHelper(0.1));
-  $('#zoomMinus').addEventListener('click', zoomHelper(-0.1));
   $('.map-child').addEventListener('wheel', wheelListener);
   $('.map-child').addEventListener('mousedown', mouseDownListener);
   $('.map-child').addEventListener('mouseup', mouseUpListener);
@@ -895,10 +867,8 @@ document.addEventListener('DOMContentLoaded', e => {
       };
     });
 
-  if (isiOS) {
-    if(document.documentElement.requestFullscreen)
-        document.documentElement.requestFullscreen();
-    document.body.style.height = document.body.clientHeight;
+  if (isMobile) {
+    $('html').style.fontSize = '200%';
   }
 
   setCursor(-1, -1);
