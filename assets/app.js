@@ -26,6 +26,7 @@ const filters = {
   filterGuns: loadFilter('filterGuns', true),
   filterArmor: loadFilter('filterArmor', true),
   filterEquip: loadFilter('filterEquip', true),
+  filterDaily: loadFilter('filterDaily', true),
 };
 
 // setup options toggles
@@ -223,9 +224,11 @@ function addMarker(data, nofilter) {
   if (meta && meta.ammo && !filters.filterGuns && !nofilter)
     return;
 
-  if (!filters.filterArmor && ['evo', 'body', 'helm', 'pack', 'knok'].includes(data.thing) && !nofilter) {
+  if (!filters.filterArmor && ['evo', 'body', 'helm', 'pack', 'knok'].includes(data.thing) && !nofilter)
     return;
-  }
+
+  if (!filters.filterDaily && ['ring', 'care'].includes(data.thing) && !nofilter)
+    return;
 
 
   const el = document.createElement('div');
@@ -846,6 +849,7 @@ document.addEventListener('DOMContentLoaded', e => {
   initToggle('settingsHideGuns', 'filterGuns', {getData: true});
   initToggle('settingsHideEquip', 'filterEquip', {getData: true});
   initToggle('settingsHideArmor', 'filterArmor', {getData: true});
+  initToggle('settingsDaily', 'filterDaily', {getData: true});
 
   $$('.items-list .item').forEach(i =>
     i.addEventListener('click', itemInit(i)));
