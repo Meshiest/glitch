@@ -167,6 +167,20 @@ const isBanned = name => new Promise(resolve =>
     resolve(doc && !!doc.banned);
   }));
 
+// ban user and delete all of their data
+const banUser = target => {
+  table.users.findOneAndUpdate({ name: target }, {$set: { banned: true, }}, (err, user) => err && console.log(err));
+  table.votes.deleteMany({ voter: target }, (err, user) => err && console.log(err));
+  table.things.deleteMany({ user: target }, (err, user) => err && console.log(err));
+};
+
+// count number of entries in last hour
+const numRecent = name =>
+  table.things.find({
+    user: {$eq: name},
+    created: {$gt: Date.now()-60*60*1000}
+  }).count();
+
 // input validation
 function validateLoot(data) {
   if (typeof data.id !== 'string')
@@ -199,16 +213,24 @@ function validateLoot(data) {
 }
 
 // automatically ban users who contribute maliciously too many times
-function punish(user) {
+function punish(user, session) {
+  const now = Date.now();
+  // reset every 2 minutes for strike counting
+  if (!session.strikeStart || now - session.strikeStart > 120000) {
+    session.strikeStart = now;
+    session.strikes = 0;
+  }
 
+  session.strikes = session.strikes || 0;
+  session.strikes++;
+
+  // if you fail 100+ times within 2 minutes, you're probably a bot
+  if (session.strikes > 100 && now - session.strikeStart < 120000)
+    banUser(user.name);
 }
 
 // posting new data to the map
 app.post('/api/data', ensureAuthenticated, async(req, res) => {
-  if(!validateLoot(req.body)) {
-    return res.status(422).json({message: 'Invalid Arguments'});
-  }
-
   const now = Date.now();
   const name = _.get(req.user, 'name');
   const admin = isAdmin(name);
@@ -229,9 +251,19 @@ app.post('/api/data', ensureAuthenticated, async(req, res) => {
     return res.status(412).json({message: 'Event Complete'});
   }
 
+  if (shouldCooldown && await numRecent(name) > 100) {
+    banUser(name);
+    return res.status(401).json({message: 'Unauthorized'});
+  }
+
   if (shouldCooldown && req.session.dataCooldown && now - req.session.dataCooldown < 10000) {
-    punish(req.user);
+    punish(req.user, req.session);
     return res.status(429).json({message: 'Too many requests'});
+  }
+
+
+  if(!validateLoot(req.body)) {
+    return res.status(422).json({message: 'Invalid Arguments'});
   }
 
   const {x, y, id, round, color} = req.body;
@@ -272,6 +304,16 @@ app.post('/api/data', ensureAuthenticated, async(req, res) => {
 app.post('/api/vote', ensureAuthenticated, async (req, res) => {
   const voter = _.get(req.user, 'name', 'guest');
   const { uuid, vote } = req.body;
+  const admin = isAdmin(voter);
+
+  const shouldCooldown = config['use-auth'] && !_.get(req.user, 'trusted') && !admin;
+
+  const now = Date.now();
+  if (shouldCooldown && req.session.voteCooldown && now - req.session.voteCooldown < 500) {
+    punish(req.user, req.session);
+    return res.status(429).json({message: 'Too many requests'});
+  }
+  req.session.voteCooldown = now;
 
   const banned = await isBanned(voter);
   if (banned) {
