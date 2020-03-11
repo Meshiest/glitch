@@ -824,6 +824,8 @@ document.addEventListener('DOMContentLoaded', e => {
   $('.map-child').addEventListener('touchcancel', touchUpListener);
   $('.map-child').addEventListener('touchmove', touchMoveListener);
 
+  window.addEventListener("resize", () => document.body.style.height = window.innerHeight + 'px');
+
   $('#cancelButton').addEventListener('click', cancelAdd);
   $('#closeButton').addEventListener('click', () => $('.preview-menu').style.display = 'none');
 
