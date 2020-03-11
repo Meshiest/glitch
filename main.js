@@ -157,7 +157,7 @@ if (config['use-auth']) {
 
 // determine if a user is banned
 const isBanned = name => new Promise(resolve =>
-  table.users .findOne({ name }, (err, doc) => {
+  table.users.findOne({ name }, (err, doc) => {
     resolve(doc && !!doc.banned);
   }));
 
@@ -210,7 +210,7 @@ app.post('/api/data', ensureAuthenticated, async(req, res) => {
     return res.status(401).json({message: 'Admin only mode'});
   }
 
-  const banned = isBanned(name);
+  const banned = await isBanned(name);
   if (banned) {
     return res.status(401).json({message: 'Unauthorized'});
   }
@@ -262,11 +262,11 @@ app.post('/api/data', ensureAuthenticated, async(req, res) => {
 });
 
 // voting request
-app.post('/api/vote', ensureAuthenticated, (req, res) => {
+app.post('/api/vote', ensureAuthenticated, async (req, res) => {
   const voter = _.get(req.user, 'name', 'guest');
   const { uuid, vote } = req.body;
 
-  const banned = isBanned(voter);
+  const banned = await isBanned(voter);
   if (banned) {
     return res.status(401).json({message: 'Unauthorized'});
   }
@@ -292,14 +292,14 @@ app.post('/api/vote', ensureAuthenticated, (req, res) => {
 });
 
 // delete a thing and its vote
-app.post('/api/delete', ensureAuthenticated, (req,res) => {
+app.post('/api/delete', ensureAuthenticated, async (req,res) => {
   const user = _.get(req.user, 'name', 'guest');
   const { uuid } = req.body;
 
   const admin = isAdmin(user);
   const isNotAdmin = config['use-auth'] && !admin;
 
-  const banned = isBanned(user);
+  const banned = await isBanned(user);
   if (banned) {
     return res.status(401).json({message: 'Unauthorized'});
   }
