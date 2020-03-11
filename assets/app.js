@@ -165,6 +165,7 @@ function mapCheck() {
 
 const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+const isiOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
 
 // helper functions for getting scroll offset
 const leftScroll = () => $('.map-child').scrollLeft,
@@ -881,7 +882,10 @@ document.addEventListener('DOMContentLoaded', e => {
       i.parentNode.classList.add('closed');
       i.onclick = () => {
         const isOpen = i.parentNode.classList.contains('open');
-        $$('.items-category').forEach(j => j.classList.add('closed'));
+        $$('.items-category').forEach(j => {
+          j.classList.add('closed')
+          j.classList.remove('open');
+        });
         if (!isOpen) {
           i.parentNode.classList.remove('closed');
           i.parentNode.classList.add('open');
@@ -890,6 +894,12 @@ document.addEventListener('DOMContentLoaded', e => {
         }
       };
     });
+
+  if (isiOS) {
+    if(document.documentElement.requestFullscreen)
+        document.documentElement.requestFullscreen();
+    document.body.style.height = document.body.clientHeight;
+  }
 
   setCursor(-1, -1);
   $('.map-child').scrollLeft = 1024 - $('.map-child').clientWidth / 2;

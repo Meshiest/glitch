@@ -573,3 +573,21 @@ a.disabled {
     max-height: 30px !important;
   }
 }
+
+@media screen and (max-width: 600px) {
+  .items-title {
+    font-size: 12px;
+  }
+
+  .items-category {
+    min-width: 70px;
+  }
+
+  .settings-hud .items-category.closed {
+    max-height: 30px !important;
+  }
+
+  .items-list .item::before {
+    font-size: 8px;
+  }
+}
