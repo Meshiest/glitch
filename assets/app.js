@@ -162,6 +162,15 @@ function post(url, body) {
   });
 }
 
+function updateMenuPos(x, y) {
+  $$('.menu').forEach(el => {
+    el.classList.add(x < 0.5 ? 'left' : 'right');
+    el.classList.remove(x < 0.5 ? 'right' : 'left');
+    el.classList.add(y < 0.5 ? 'top' : 'bottom');
+    el.classList.remove(y < 0.5 ? 'bottom' : 'top');
+  });
+}
+
 function setCursor(x, y) {
   cursorPos = [x, y];
   $('.cursor.center').style.left =
@@ -169,6 +178,7 @@ function setCursor(x, y) {
   $('.cursor.center').style.top =
   $('.cursor.left').style.top = y*2048 + 'px';
 
+  updateMenuPos(x, y);
   $('.preview-menu').style.display = 'none';
 }
 
@@ -256,6 +266,8 @@ function clickMarker(el) {
 
   preview.setAttribute('x', el.getAttribute('x'));
   preview.setAttribute('y', el.getAttribute('y'));
+
+  updateMenuPos(Number(el.getAttribute('x')), Number(el.getAttribute('y')));
 
   $('#goodPoints').innerText = '+' + data.good;
   $('#badPoints').innerText = '-' + data.bad;

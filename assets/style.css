@@ -65,6 +65,7 @@ body {
 .map-child .overlay {
   width: 2048px;
   height: 2048px;
+  overflow: hidden;
   z-index: 2;
 }
 
@@ -416,14 +417,15 @@ body {
   position: absolute;
 }
 
-.cursor .addition-menu {
-  left: 12px;
-  bottom: calc(1.25rem + 7px);
-}
+.cursor .addition-menu.left { left: 1rem; }
+.cursor .addition-menu.right { right: 1rem; }
+.cursor .addition-menu.bottom { bottom: 1rem; }
+.cursor .addition-menu.top { top: 1rem; }
 
-.preview-menu {
-  transform: translate(12px, calc(-1.25rem - 7px - 100%));
-}
+.preview-menu.bottom.left { transform: translate(1rem, calc(-1.25rem - 1rem - 100%)); }
+.preview-menu.bottom.right { transform: translate(calc(-1rem - 100%), calc(-1.25rem - 1rem - 100%)); }
+.preview-menu.top.left { transform: translate(1rem, 1rem); }
+.preview-menu.top.right { transform: translate(calc(-1rem - 100%), 1rem); }
 
 .menu a, .menu a:visited, .top-hud a, .top-hud a:visited, a:visited {
   color: #ccf;
