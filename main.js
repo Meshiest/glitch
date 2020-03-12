@@ -148,8 +148,6 @@ if (config['use-auth']) {
             return res.status(500).json({message: 'Error deleting votes'});
           res.json({message: 'ok'});
         });
-
-        res.json({message: 'ok'});
       }
     );
   });
@@ -169,9 +167,13 @@ const isBanned = name => new Promise(resolve =>
 
 // ban user and delete all of their data
 const banUser = target => {
-  table.users.findOneAndUpdate({ name: target }, {$set: { banned: true, }}, (err, user) => err && console.log(err));
-  table.votes.deleteMany({ voter: target }, (err, user) => err && console.log(err));
-  table.things.deleteMany({ user: target }, (err, user) => err && console.log(err));
+  try {
+    table.users.findOneAndUpdate({ name: target }, {$set: { banned: true, }}, (err, user) => err && console.log(err));
+    table.votes.deleteMany({ voter: target }, (err, user) => err && console.log(err));
+    table.things.deleteMany({ user: target }, (err, user) => err && console.log(err));
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 // count number of entries in last hour
