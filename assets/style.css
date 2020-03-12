@@ -389,22 +389,30 @@ body {
 
 .item.purple, .menu .purple,
 .item[data-short="8x"], .selected-item[data-short="8x"] span,
+.item[data-short="3x"], .selected-item[data-short="3x"] span,
+.item[data-short="2-4x"], .selected-item[data-short="2-4x"] span,
 .item[data-short*="mag"], .selected-item[data-short*="mag"] span,
 .item[data-short="2tap"], .selected-item[data-short="2tap"] span,
 .item[data-short="fire"], .selected-item[data-short="fire"] span,
 .item[data-short="chok"], .selected-item[data-short="chok"] span,
 .item[data-short="hamm"], .selected-item[data-short="hamm"] span{color: #e700eb;}
 
-.item.blue, .selected-item.blue span, .menu .blue {color: #3592fc;}
-
 .marker.purple,
 .marker[data-short="8x"],
+.marker[data-short="2-4x"],
+.marker[data-short="3x"],
 .marker[data-short*="mag"],
 .marker[data-short="2tap"],
 .marker[data-short="fire"],
 .marker[data-short="chok"],
 .marker[data-short="hamm"]{background: #e700eb;}
 
+.item[data-short="1-2x"], .selected-item[data-short="1-2x"] span,
+.item[data-short="2x"], .selected-item[data-short="2x"] span,
+.item.blue, .selected-item.blue span, .menu .blue {color: #3592fc;}
+
+.marker[data-short="1-2x"],
+.marker[data-short="2x"],
 .marker.blue{background: #3592fc;}
 
 .menu {

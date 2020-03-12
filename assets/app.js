@@ -573,7 +573,7 @@ const itemInit = el => {
       $('#addButton').onclick = e => {
         console.log('adding', short, 'at', ...cursorPos);
         postData(short, cursorPos, {
-          color: el.classList.length === 2 ? el.classList[1] : undefined,
+          color: el.className.replace(/(filtered|item| )/g, ''),
           round: chosenRound,
         });
       };

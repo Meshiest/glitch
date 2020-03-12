@@ -43,7 +43,7 @@ const END_DATE = new Date('3/17/2020 12:00 CDT').getTime();
 const THINGS = 'r99 alt prow r301 g7 flat hem hav spit star '+
   'long trip char sent pk eva moz mast re45 ' +
   '2020 wing evo helm body knok pack '+
-  'stab bolt 1x 8x anv '+
+  'stab bolt 1x 1-2x 2-4x 2x 3x 8x anv '+
   'hmag lmag smag ' +
   '2tap fire chok hamm ring care'.split(' ');
 
@@ -207,8 +207,9 @@ function validateLoot(data) {
   }
 
   if (ARMOR.includes(data.id) && data.color !== 'gold' && data.color !== 'purple') {
-    if (data.id === 'body' && data.color !== 'blue')
+    if (data.id === 'body' && data.color !== 'blue') {
       return false;
+    }
   }
 
   return true;
