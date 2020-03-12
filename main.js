@@ -356,6 +356,7 @@ app.post('/api/delete', ensureAuthenticated, async (req,res) => {
   }
 
   // prevent users from deleting data after the event
+  const now = Date.now();
   if (isNotAdmin && now > END_DATE) {
     return res.status(412).json({message: 'Event Complete'});
   }
