@@ -248,7 +248,7 @@ body {
   flex-direction: column;
   overflow: visible;
   font-family: monospace;
-  min-width: 120px;
+  min-width: 10rem;
   font-size: 1.2rem;
 }
 
@@ -258,7 +258,7 @@ body {
 
 .settings-list tr td:first-child {
   text-align: right;
-  padding-right: 4px;
+  padding-right: .2rem;
 }
 
 .checkbox-setting {
@@ -321,7 +321,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 2rem;
-  padding: 0 8px;
+  padding: 0 .8rem;
 }
 
 .items-list, .admin-list {
@@ -515,11 +515,11 @@ a.disabled {
 .rounds a {
   margin: 0 4px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 1.3rem;
 }
 
 .rounds a.unselected {
-  font-size: 12px;
+  font-size: 1rem;
   text-decoration: none;
 }
 
@@ -544,7 +544,7 @@ a.disabled {
 }
 
 .admin-table {
-  font-size: 12px;
+  font-size: 1rem;
 }
 
 .admin-table td {

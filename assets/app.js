@@ -221,7 +221,7 @@ function addMarker(data, nofilter) {
   if ((data.good < 1 || data.bad !== 0 && data.good/data.bad < 0.5) && filters.filterPositive && !nofilter)
     return;
 
-  const attach = ['stab', '1x', '8x', 'hmag', 'lmag', 'smag', 'bolt', 'anv', '2tap', 'fire', 'chok', 'hamm'];
+  const attach = ['stab', '1x', '1-2x', '2-4x', '2x', '3x', '8x', 'hmag', 'lmag', 'smag', 'bolt', 'anv', '2tap', 'fire', 'chok', 'hamm'];
 
   if (!filters.filterEquip && attach.includes(data.thing) && !nofilter)
     return;
