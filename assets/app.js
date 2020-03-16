@@ -543,6 +543,8 @@ document.addEventListener('DOMContentLoaded', e => {
   $('.map-child').scrollLeft = 1024 - $('.map-child').clientWidth / 2;
   $('.map-child').scrollTop = 1024 - $('.map-child').clientHeight / 2;
 
+  $('.preview-menu').style.display = 'none';
+
   // refresh
   setMap(1);
   $('.map-child').style.opacity = 1;
