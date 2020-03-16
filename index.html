@@ -24,58 +24,6 @@
       <img draggable="false" class="map kc" src="https://raw.githubusercontent.com/Meshiest/glitch/master/assets/kingscanyon.jpg">
       <img draggable="false" class="map we" src="https://raw.githubusercontent.com/Meshiest/glitch/master/assets/worldsedge.jpg">
       <div class="overlay" onclick=""></div>
-      <div class="cursor left"></div>
-      <div class="cursor top"></div>
-      <div class="cursor center">
-        <div class="marker new normal"></div>
-        <div class="marker new ring"></div>
-        <div class="marker new care"></div>
-        <div class="menu addition-menu authed">
-          <div class="state-0">
-            Select a weapon or item from the bottom menu.
-          </div>
-          <div class="state-1">
-            <div>Selected item:</div>
-            <div class="selected-item">
-              <span class="item-long"></span> (<span class="item-short"></span>)
-            </div>
-          </div>
-          <div class="state-2">
-            <div>Daily Round Info: </div>
-            <div class="selected-item">
-              <span class="item-long"></span> (<span class="item-short"></span>)
-            </div>
-            <div class="rounds">
-              <a href="#" data-round="1">1</a>
-              <a href="#" data-round="2">2</a>
-              <a href="#" data-round="3">3</a>
-              <a href="#" data-round="4">4</a>
-              <a href="#" data-round="5">5</a>
-              <a href="#" data-round="6">6</a>
-              <a href="#" data-round="7">7</a>
-            </div>
-            <div class="care-note">
-              Note: <i>care package loot is random</i>
-            </div>
-          </div>
-          <div class="state-3">
-            <div>
-              This map can not be edited at this time.
-            </div>
-            <div class="kc countdown-clock" style="display: none">
-            </div>
-          </div>
-          <div class="action-items">
-            <a href="#" id="addButton">add</a>
-            <span flex></span>
-            <a href="#" id="cancelButton">cancel</a>
-          </div>
-        </div>
-        <div class="menu addition-menu no-auth">
-          Please <a href="/auth/reddit">login</a> with Reddit to commit
-          data to the map.
-        </div>
-      </div>
       <div class="menu preview-menu">
         <div>
           <div class="selected-item">
@@ -83,18 +31,11 @@
           </div>
           <div class="points">
             votes:&nbsp;<span id="goodPoints" class="good"></span>&nbsp;<span id="badPoints" class="bad"></span>&nbsp;(<span id="percent"></span>)
-            <span flex></span>
-            <span class="action-items">
-              <a href="#" id="upvoteButton" class="good">+1</a>
-              <a href="#" id="downvoteButton" class="bad">-1</a>
-            </span>
           </div>
         </div>
         <div>user:&nbsp;<a href="#" id="redditUser"></a> [<a href="#" id="blockButton">block</a>]</div>
-        <div>age:&nbsp;<span id="age"></span></div>
         <div class="action-items">
           <span flex></span>
-          <a href="#" id="deleteButton">delete</a>
           <a href="#" id="closeButton">close</a>
         </div>
       </div>
@@ -106,14 +47,6 @@
           <tr>
             <td>marker opacity</td>
             <td><input id="settingsOpacitySlider" type="range" min="0" max="100" step="10"></td>
-          </tr>
-          <tr>
-            <td>hide downvoted</td>
-            <td>
-              <div class="checkbox-setting">
-                <input id="settingsHideNegative" type="checkbox"><label for="settingsHideNegative">on</label>
-              </div>
-            </td>
           </tr>
           <tr>
             <td>only upvoted</td>
@@ -151,14 +84,6 @@
             <td>
               <div class="checkbox-setting">
                 <input id="settingsHideArmor" type="checkbox"><label for="settingsHideArmor">on</label>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>show daily</td>
-            <td>
-              <div class="checkbox-setting">
-                <input id="settingsDaily" type="checkbox"><label for="settingsDaily">on</label>
               </div>
             </td>
           </tr>
@@ -245,21 +170,10 @@
           <div data-short="hamm" data-name="hammer point" class="item purple">hamm</div>
         </div>
       </div>
-      <!-- not implemented yet -->
-      <div class="items-category">
-        <div class="items-title">
-          daily
-        </div>
-        <div class="items-list">
-          <div data-short="ring" data-game="true" data-name="ring" class="item">ring</div>
-          <div data-short="care" data-game="true" data-name="care package" class="item">care</div>
-        </div>
-      </div>
     </div>
     <div class="top-hud">
       <a href="#" class="we map-button">see kings canyon</a>
       <a href="#" class="kc map-button">see worlds edge</a>
-      <a id="logout" href="/auth/logout" style="display: none">log out</a>
     </div>
   </div>
   <script>document.body.style.height = window.innerHeight + 'px';</script>
